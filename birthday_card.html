@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Happy Birthday! 🎂</title>
+<style>
+  :root{
+    --bg1:#ff9a9e; --bg2:#fecfef; --bg3:#a18cd1;
+    --card-bg:#fffdf9; --text:#3a2e39; --accent:#ff6f91; --accent2:#ffc75f;
+    padding-top: env(safe-area-inset-top,0px);
+    padding-bottom: env(safe-area-inset-bottom,0px);
+    box-sizing:border-box;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --card-bg:#241b2b; --text:#f3ecf5;
+    }
+  }
+  :root[data-theme="dark"]{ --card-bg:#241b2b; --text:#f3ecf5; }
+
+  *{box-sizing:border-box;}
+  html,body{
+    margin:0; height:100%;
+    font-family:'Georgia',serif;
+    background:linear-gradient(135deg,var(--bg1),var(--bg2),var(--bg3));
+    background-size:200% 200%;
+    animation:gradientShift 12s ease infinite;
+    color:var(--text);
+    overflow-x:hidden;
+  }
+  @keyframes gradientShift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+  }
+
+  .stage{
+    min-height:100%;
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    position:relative;
+  }
+
+  /* confetti */
+  .confetti{
+    position:fixed; top:-10px; width:10px; height:16px; opacity:0.9;
+    animation:fall linear infinite;
+  }
+  @keyframes fall{
+    to{ transform:translateY(110vh) rotate(360deg); }
+  }
+
+  /* balloons */
+  .balloon{
+    position:absolute; bottom:-120px; width:46px; height:58px;
+    border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;
+    animation:rise 9s ease-in infinite;
+    opacity:0.9;
+  }
+  .balloon::after{
+    content:''; position:absolute; left:50%; top:100%;
+    width:1px; height:60px; background:rgba(0,0,0,0.2); transform:translateX(-50%);
+  }
+  @keyframes rise{
+    0%{ transform:translateY(0) translateX(0); opacity:0.9; }
+    90%{ opacity:0.9; }
+    100%{ transform:translateY(-115vh) translateX(20px); opacity:0; }
+  }
+
+  .card{
+    position:relative; z-index:2;
+    background:var(--card-bg);
+    max-width:520px; width:100%;
+    padding:44px 34px 36px;
+    border-radius:22px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.25);
+    text-align:center;
+    animation:popIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+  }
+  @keyframes popIn{
+    0%{ transform:scale(0.7) translateY(30px); opacity:0; }
+    100%{ transform:scale(1) translateY(0); opacity:1; }
+  }
+
+  .cake{ font-size:64px; display:inline-block; animation:wiggle 2.4s ease-in-out infinite; }
+  @keyframes wiggle{
+    0%,100%{ transform:rotate(-4deg); }
+    50%{ transform:rotate(4deg); }
+  }
+
+  h1{
+    font-size:clamp(28px,6vw,40px);
+    margin:14px 0 6px;
+    color:var(--accent);
+    letter-spacing:0.5px;
+  }
+  .name{ color:var(--accent2); text-shadow:0 1px 0 rgba(0,0,0,0.08); }
+
+  p.msg{
+    font-size:17px; line-height:1.6; margin:18px 0 26px;
+    color:var(--text);
+  }
+
+  .btn{
+    display:inline-block; border:none; cursor:pointer;
+    background:var(--accent); color:#fff; font-size:16px;
+    padding:12px 26px; border-radius:999px;
+    box-shadow:0 8px 20px rgba(255,111,145,0.4);
+    transition:transform .15s ease;
+  }
+  .btn:hover{ transform:translateY(-2px) scale(1.03); }
+
+  .footnote{
+    margin-top:18px; font-size:12px; opacity:0.55;
+  }
+</style>
+</head>
+<body>
+  <div class="stage" id="stage">
+    <div class="card">
+      <div class="cake">🎂</div>
+      <h1>Happy Birthday, <span class="name" id="nameSlot">Friend</span>!</h1>
+      <p class="msg" id="msgSlot">
+        Wishing you a day full of laughter, cake, and everything you love.
+        Here's to another year of great stories — enjoy every minute of it! 🎉
+      </p>
+      <button class="btn" id="celebrateBtn">🎈 Celebrate!</button>
+      <div class="footnote">made with care, just for you</div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  // ---- EASY CUSTOMIZATION ----
+  // Change these two lines to personalize the card:
+  const RECIPIENT_NAME = "Friend";
+  const MESSAGE = "Wishing you a day full of laughter, cake, and everything you love. Here's to another year of great stories — enjoy every minute of it! 🎉";
+  document.getElementById('nameSlot').textContent = RECIPIENT_NAME;
+  document.getElementById('msgSlot').textContent = MESSAGE;
+  // -----------------------------
+
+  const stage = document.getElementById('stage');
+  const colors = ['#ff6f91','#ffc75f','#a18cd1','#6bd1c0','#fecfef'];
+
+  function spawnConfetti(n){
+    for(let i=0;i<n;i++){
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.left = Math.random()*100 + 'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (2.5 + Math.random()*2.5) + 's';
+      el.style.animationDelay = (Math.random()*2) + 's';
+      el.style.width = (6 + Math.random()*6) + 'px';
+      el.style.height = (10 + Math.random()*8) + 'px';
+      stage.appendChild(el);
+      setTimeout(()=>el.remove(), 6000);
+    }
+  }
+
+  function spawnBalloons(n){
+    for(let i=0;i<n;i++){
+      const el = document.createElement('div');
+      el.className = 'balloon';
+      el.style.left = (5 + Math.random()*90) + 'vw';
+      el.style.background = colors[Math.floor(Math.random()*colors.length)];
+      el.style.animationDuration = (7 + Math.random()*4) + 's';
+      el.style.animationDelay = (Math.random()*3) + 's';
+      stage.appendChild(el);
+      setTimeout(()=>el.remove(), 12000);
+    }
+  }
+
+  // gentle ambient effect on load
+  spawnBalloons(5);
+  spawnConfetti(20);
+
+  document.getElementById('celebrateBtn').addEventListener('click', function(){
+    spawnConfetti(60);
+    spawnBalloons(6);
+  });
+})();
+</script>
+</body>
+</html>
